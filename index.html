@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MiniQ | 3D Portfolio</title>
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js"></script>
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" as="style">
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -27,6 +37,11 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            scroll-behavior: smooth;
         }
         
         body {
@@ -35,6 +50,9 @@
             color: var(--light);
             min-height: 100vh;
             line-height: 1.6;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Navigation */
@@ -52,6 +70,7 @@
             border-bottom: 1px solid var(--glass-border);
             transition: var(--transition);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            will-change: transform, background, padding;
         }
         
         nav.scrolled {
@@ -80,11 +99,14 @@
         .logo-img img {
             width: 100px;
             height: 150px;
-            
         }
         
-       
-        
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+        }
         
         .logo-text span {
             background: linear-gradient(to right, var(--primary), var(--secondary));
@@ -158,6 +180,16 @@
             font-size: 24px;
             cursor: pointer;
             z-index: 101;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu-btn:hover {
+            background: var(--glass);
         }
         
         /* Home Section with 3D Robot */
@@ -167,6 +199,7 @@
             overflow: hidden;
             display: flex;
             align-items: center;
+            will-change: transform;
         }
         
         .robot-container {
@@ -176,25 +209,14 @@
             width: 100%;
             height: 98%;
             z-index: 1;
+            will-change: transform;
         }
         
         /* Hide Spline branding and controls */
-        spline-viewer::part(logo) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(loading) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(loading-container) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(watermark) {
-            display: none !important;
-        }
-        
+        spline-viewer::part(logo),
+        spline-viewer::part(loading),
+        spline-viewer::part(loading-container),
+        spline-viewer::part(watermark),
         spline-viewer::part(toolbar) {
             display: none !important;
         }
@@ -219,7 +241,7 @@
             opacity: 0;
             animation: slideIn 0.8s forwards 0.3s;
             width: 1400px;
-            
+            will-change: transform, opacity;
         }
         
         @keyframes slideIn {
@@ -265,6 +287,7 @@
             font-size: 1rem;
             position: relative;
             overflow: hidden;
+            will-change: transform, box-shadow;
         }
         
         .btn::before {
@@ -287,10 +310,12 @@
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
         }
         
-        /* About Section */
-        #about {
+        /* Gallery Section */
+        #gallery {
             padding: 120px 5%;
             background: var(--darker);
+            position: relative;
+            z-index: 2;
         }
         
         .section-header {
@@ -316,6 +341,69 @@
             line-height: 1.7;
         }
         
+        .video-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .video-container {
+            position: relative;
+            height: 250px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            transform: translateY(0);
+            cursor: pointer;
+            will-change: transform;
+        }
+        
+        .video-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .video-container:hover video {
+            transform: scale(1.05);
+        }
+        
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+        
+        .video-overlay h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .video-overlay p {
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        
+        /* About Section */
+        #about {
+            padding: 120px 5%;
+            background: var(--darker);
+        }
+        
         .about-container {
             display: flex;
             gap: 40px;
@@ -331,6 +419,7 @@
             padding: 40px;
             border: 1px solid var(--glass-border);
             transition: var(--transition);
+            will-change: transform;
         }
         
         .about-content:hover {
@@ -374,6 +463,7 @@
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             transition: var(--transition);
+            will-change: transform;
         }
         
         .founder-section:hover {
@@ -432,6 +522,7 @@
             border: 1px solid var(--glass-border);
             margin: 30px auto 0;
             transition: var(--transition);
+            will-change: transform;
         }
         
         .form-container:hover {
@@ -590,6 +681,35 @@
             transform: translateY(-5px);
         }
         
+        /* Contact Info Styles */
+        .contact-info {
+            list-style: none;
+        }
+        
+        .contact-info li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .contact-info i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            min-width: 24px;
+            margin-top: 4px;
+        }
+        
+        .contact-info a {
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .contact-info a:hover {
+            color: var(--primary);
+        }
+        
         .copyright {
             text-align: center;
             padding-top: 40px;
@@ -598,7 +718,7 @@
             font-size: 0.9rem;
         }
         
-        /* Mobile Navigation */
+        /* Mobile Navigation - Updated Style */
         .mobile-nav {
             position: fixed;
             top: 0;
@@ -612,11 +732,16 @@
             justify-content: center;
             align-items: center;
             transform: translateY(-100%);
-            transition: transform 0.4s ease;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            visibility: hidden;
+            will-change: transform, opacity;
         }
         
         .mobile-nav.active {
             transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
         }
         
         .mobile-nav-links {
@@ -624,66 +749,62 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
+            width: 100%;
+            padding: 0 20px;
         }
         
         .mobile-nav-links a {
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-size: clamp(1.5rem, 5vw, 2rem);
             text-decoration: none;
             color: var(--light);
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 12px;
+            font-weight: 600;
+            padding: 15px 30px;
+            border-radius: 15px;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            will-change: transform, opacity;
+        }
+        
+        .mobile-nav.active .mobile-nav-links a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .mobile-nav.active .mobile-nav-links a:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(4) {
+            transition-delay: 0.4s;
         }
         
         .mobile-nav-links a:hover {
-            background: rgba(255,255,255,0.05);
-            transform: translateY(-3px);
+            background: var(--primary);
+            transform: translateY(-5px) !important;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .mobile-nav-links a i {
+            font-size: 1.2em;
         }
         
         .close-menu {
             position: absolute;
-            top: 30px;
-            right: 30px;
-            background: transparent;
-            border: none;
-            color: var(--light);
-            font-size: 28px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .close-menu:hover {
-            transform: rotate(90deg);
-        }
-        
-        /* Gallery Modal Styles */
-        #gallery-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 15, 31, 0.98);
-            z-index: 2000;
-            overflow-y: auto;
-            padding: 40px 0;
-            backdrop-filter: blur(10px);
-        }
-        
-        .modal-content {
-            position: relative;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .close-modal {
-            position: fixed;
             top: 30px;
             right: 30px;
             background: var(--primary);
@@ -696,93 +817,70 @@
             justify-content: center;
             font-size: 24px;
             cursor: pointer;
-            z-index: 2001;
             transition: var(--transition);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: none;
         }
         
-        .close-modal:hover {
-            transform: rotate(90deg);
+        .close-menu:hover {
+            transform: rotate(90deg) scale(1.1);
             background: var(--primary-dark);
         }
         
-        .modal-gallery-content {
-            margin-top: 80px;
-        }
-        
-        #gallery-modal .section-header {
-            margin-bottom: 40px;
-        }
-        
-        .modal-open {
-            overflow: hidden;
-        }
-        
-        /* Gallery modal animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        #gallery-modal {
-            animation: fadeIn 0.4s ease forwards;
-        }
-        
-        /* Updated Gallery Grid */
-        .video-gallery {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        .video-container {
-            position: relative;
-            height: 250px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
-            transform: translateY(0);
-            cursor: pointer;
-        }
-        
-        .video-container:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-        }
-        
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .video-container:hover video {
-            transform: scale(1.05);
-        }
-        
-        .video-overlay {
-            position: absolute;
-            bottom: 0;
+        /* Video Modal for Fullscreen */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .video-modal.active {
+            display: flex;
+        }
+        
+        .video-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+        }
+        
+        .video-modal-content video {
+            width: 100%;
+            height: auto;
+            max-height: 90vh;
+            border-radius: 15px;
+            outline: none;
+        }
+        
+        .close-video {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--primary);
             color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
         }
         
-        .video-overlay h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        
-        .video-overlay p {
-            font-size: 0.9rem;
-            color: #ddd;
+        .close-video:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--primary-dark);
         }
         
         /* Responsive Design */
@@ -803,6 +901,10 @@
             .hero-content {
                 width: 100%;
                 max-width: 100%;
+            }
+            
+            .video-gallery {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
         
@@ -826,11 +928,6 @@
             .form-group.full-width {
                 grid-column: span 1;
             }
-            
-            /* Gallery grid for tablets */
-            .video-gallery {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
         
         @media (max-width: 768px) {
@@ -843,7 +940,7 @@
             }
             
             .mobile-menu-btn {
-                display: block;
+                display: flex;
             }
             
             .hero-content h1 {
@@ -885,6 +982,34 @@
             .btn {
                 padding: 12px 24px;
                 font-size: 0.9rem;
+            }
+            
+            .video-gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .video-container {
+                height: 200px;
+            }
+            
+            /* Optimize videos for mobile */
+            .video-container video {
+                transform: none !important;
+            }
+            
+            /* Disable hover effects on mobile */
+            .video-container:hover {
+                transform: none !important;
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3) !important;
+            }
+            
+            .btn:hover, 
+            .about-content:hover, 
+            .founder-section:hover,
+            .form-container:hover,
+            .social-links a:hover {
+                transform: none !important;
             }
         }
         
@@ -930,11 +1055,68 @@
                 font-size: 0.9rem;
             }
             
-            /* Gallery grid for mobile */
-            .video-gallery {
-                grid-template-columns: 1fr;
+            /* Further optimize for small screens */
+            .founder-section {
+                padding: 15px;
+            }
+            
+            .founder-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .founder-image img {
+                width: 150px;
+                height: 180px;
             }
         }
+        
+        /* Performance optimizations */
+        @media (hover: none) {
+            /* Disable hover effects on touch devices */
+            .btn:hover, 
+            .about-content:hover, 
+            .founder-section:hover,
+            .form-container:hover,
+            .social-links a:hover,
+            .video-container:hover {
+                transform: none !important;
+                box-shadow: none !important;
+            }
+            
+            .btn::before {
+                display: none;
+            }
+        }
+        
+        /* Only adding smooth scrolling CSS */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        
+        /* For browsers that don't support smooth scrolling */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        /* Add transition for all scrollable sections */
+        section {
+            scroll-margin-top: 80px;
+            transition: scroll-margin-top 0.3s ease;
+        }
+        
+        /* Optimize video loading */
+       
     </style>
 </head>
 <body>
@@ -942,17 +1124,17 @@
     <nav>
         <a href="#home" class="logo">
             <div class="logo-img">
-                <img src="logo.png" alt="MiniQ Logo">
+                <img src="logo.png" alt="MiniQ Logo" loading="lazy">
             </div>
-            
         </a>
         <div class="nav-links">
             <div class="menu-graphic"></div>
             <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
-            <a href="#" class="nav-link gallery-link"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a>
             <a href="#about" class="nav-link"><i class="fas fa-users"></i> About</a>
             <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
         </div>
+        
         <button class="mobile-menu-btn">
             <i class="fas fa-bars"></i>
         </button>
@@ -965,7 +1147,7 @@
         </button>
         <div class="mobile-nav-links">
             <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
-            <a href="#" class="nav-link gallery-link"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a>
             <a href="#about" class="nav-link"><i class="fas fa-users"></i> About</a>
             <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
         </div>
@@ -985,124 +1167,129 @@
             <div class="hero-content">
                 <h1>Transform Your Digital Experience</h1>
                 <p>MiniQ brings your ideas to life with cutting-edge 3D visualization technology. Explore, interact, and innovate with our immersive platform that pushes the boundaries of digital creativity.</p>
-                <button class="btn gallery-btn">
+                <a href="#gallery" class="btn">
                     <i class="fas fa-play"></i>
                     Explore Our Gallery
-                </button>
+                </a>
             </div>
         </div>
     </section>
     
-    <!-- Gallery Modal -->
-    <div id="gallery-modal">
-        <button class="close-modal">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="modal-content">
-            <div class="modal-gallery-content">
-                <div class="section-header">
-                    <h2>Our Creative Gallery</h2>
-                    <p>Explore our collection of immersive 3D and motion design projects</p>
-                </div>
-                
-                <div class="video-gallery">
-                    <!-- Project 1 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="1 video.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Visual Storytelling</h4>
-                            <p>3D animation showcase</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 2 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video 2.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>AI Creation</h4>
-                            <p>Generative design exploration</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 3 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video 3.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Brand Identity</h4>
-                            <p>Corporate visual identity</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 4 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video 4.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Creative Direction</h4>
-                            <p>Artistic vision implementation</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 5 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video 5.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Concept Design</h4>
-                            <p>Product visualization</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 6 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video 6.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Futuristic Ads</h4>
-                            <p>Next-gen advertising</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 7 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video7.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Motion Graphics</h4>
-                            <p>Dynamic visual elements</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Project 8 -->
-                    <div class="video-container">
-                        <video autoplay muted loop playsinline>
-                            <source src="video8.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="video-overlay">
-                            <h4>Virtual Reality</h4>
-                            <p>Immersive experiences</p>
-                        </div>
-                    </div>
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <div class="section-header">
+            <h2>Our Creative Gallery</h2>
+            <p>Explore our collection of immersive 3D and motion design projects</p>
+        </div>
+        
+        <div class="video-gallery">
+            <!-- Project 1 -->
+            <div class="video-container" data-video-src="1 video.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="1 video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Visual Storytelling</h4>
+                    <p>3D animation showcase</p>
                 </div>
             </div>
+            
+            <!-- Project 2 -->
+            <div class="video-container" data-video-src="video 2.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video 2.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>AI Creation</h4>
+                    <p>Generative design exploration</p>
+                </div>
+            </div>
+            
+            <!-- Project 3 -->
+            <div class="video-container" data-video-src="video 3.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video 3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Brand Identity</h4>
+                    <p>Corporate visual identity</p>
+                </div>
+            </div>
+            
+            <!-- Project 4 -->
+            <div class="video-container" data-video-src="video 4.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video 4.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Creative Direction</h4>
+                    <p>Artistic vision implementation</p>
+                </div>
+            </div>
+            
+            <!-- Project 5 -->
+            <div class="video-container" data-video-src="video 5.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video 5.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Concept Design</h4>
+                    <p>Product visualization</p>
+                </div>
+            </div>
+            
+            <!-- Project 6 -->
+            <div class="video-container" data-video-src="video 6.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video 6.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Futuristic Ads</h4>
+                    <p>Next-gen advertising</p>
+                </div>
+            </div>
+            
+            <!-- Project 7 -->
+            <div class="video-container" data-video-src="video7.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video7.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Motion Graphics</h4>
+                    <p>Dynamic visual elements</p>
+                </div>
+            </div>
+            
+            <!-- Project 8 -->
+            <div class="video-container" data-video-src="video8.mp4">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="video8.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Virtual Reality</h4>
+                    <p>Immersive experiences</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Video Modal for Fullscreen -->
+    <div class="video-modal">
+        <div class="video-modal-content">
+            <button class="close-video">
+                <i class="fas fa-times"></i>
+            </button>
+            <video controls>
+                Your browser does not support the video tag.
+            </video>
         </div>
     </div>
     
@@ -1115,14 +1302,9 @@
         
         <div class="about-container">
             <div class="about-content">
-                <h3>Our Story</h3>
-                <p>MiniQ was founded in 2022 with a vision to revolutionize digital experiences through immersive 3D technology. What started as a passion project has grown into a full-service creative studio pushing the boundaries of digital design.</p>
-                <p>We specialize in creating interactive 3D experiences that engage audiences and tell compelling brand stories. Our team combines technical expertise with artistic vision to deliver projects that stand out in today's crowded digital landscape.</p>
-                <p>From concept to execution, we work closely with our clients to ensure every project meets their strategic goals while delivering an unforgettable user experience.</p>
-                
                 <div class="founder-section">
                     <div class="founder-image">
-                        <img src="himesh.jpg" alt="Himesh Jain - Founder">
+                        <img src="himesh.jpg" alt="Himesh Jain - Founder" loading="lazy">
                     </div>
                     <div class="founder-info">
                         <h4>Himesh Jani</h4>
@@ -1211,9 +1393,35 @@
                 <h3>Quick Links</h3>
                 <ul class="footer-links">
                     <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
-                    <li><a href="#" class="gallery-link"><i class="fas fa-chevron-right"></i> Gallery</a></li>
+                    <li><a href="#gallery"><i class="fas fa-chevron-right"></i> Gallery</a></li>
                     <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
                     <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Our Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> 3D Visualization</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Motion Graphics</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> AI-Powered Ads</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Brand Identity</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <a href="miniqaiagency@gmail.com">miniqaiagency@gmail.com</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:+917738004227">+91 7738004227</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Mumbai, India</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -1222,54 +1430,73 @@
     </footer>
     
     <script>
-        // Gallery modal functionality
-        const galleryModal = document.getElementById('gallery-modal');
-        const galleryLinks = document.querySelectorAll('.gallery-link, .gallery-btn');
-        const closeModalBtn = document.querySelector('.close-modal');
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.querySelector('.mobile-nav');
+        const closeMenuBtn = document.querySelector('.close-menu');
         
-        // Function to open gallery modal
-        function openGalleryModal() {
-            galleryModal.style.display = 'block';
-            document.body.classList.add('modal-open');
-            // Ensure all videos play when modal opens
-            document.querySelectorAll('.video-container video').forEach(video => {
-                video.play();
-            });
-        }
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileNav.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
         
-        // Function to close gallery modal
-        function closeGalleryModal() {
-            galleryModal.style.display = 'none';
-            document.body.classList.remove('modal-open');
-        }
+        closeMenuBtn.addEventListener('click', function() {
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        });
         
-        // Add event listeners to all gallery links
-        galleryLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                openGalleryModal();
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
             });
         });
         
-        // Close modal when clicking close button
-        closeModalBtn.addEventListener('click', closeGalleryModal);
+        // Video modal functionality
+        const videoModal = document.querySelector('.video-modal');
+        const videoContainers = document.querySelectorAll('.video-container');
+        const closeVideoBtn = document.querySelector('.close-video');
+        const videoModalContent = document.querySelector('.video-modal-content video');
         
-        // Close modal when clicking outside content
-        galleryModal.addEventListener('click', function(e) {
-            if (e.target === galleryModal) {
-                closeGalleryModal();
+        // Open video in fullscreen modal
+        videoContainers.forEach(container => {
+            container.addEventListener('click', function() {
+                const videoSrc = this.getAttribute('data-video-src');
+                videoModalContent.src = videoSrc;
+                videoModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                videoModalContent.play();
+            });
+        });
+        
+        // Close video modal
+        closeVideoBtn.addEventListener('click', function() {
+            videoModal.classList.remove('active');
+            document.body.style.overflow = '';
+            videoModalContent.pause();
+        });
+        
+        // Close video modal when clicking outside
+        videoModal.addEventListener('click', function(e) {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = '';
+                videoModalContent.pause();
             }
         });
         
-        // Close modal with ESC key
+        // Close video modal with ESC key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && galleryModal.style.display === 'block') {
-                closeGalleryModal();
+            if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = '';
+                videoModalContent.pause();
             }
         });
         
         // Navigation functionality
-        document.querySelectorAll('.nav-link:not(.gallery-link), .mobile-nav-links a:not(.gallery-link)').forEach(element => {
+        document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(element => {
             element.addEventListener('click', function(e) {
                 e.preventDefault();
                 
@@ -1284,19 +1511,7 @@
                     link.classList.remove('active');
                 });
                 this.classList.add('active');
-                
-                // Close mobile menu if open
-                document.querySelector('.mobile-nav').classList.remove('active');
             });
-        });
-        
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            document.querySelector('.mobile-nav').classList.add('active');
-        });
-        
-        document.querySelector('.close-menu').addEventListener('click', function() {
-            document.querySelector('.mobile-nav').classList.remove('active');
         });
         
         // Hide Spline controls completely
@@ -1318,12 +1533,16 @@
             
             // Ensure all videos in gallery play
             document.querySelectorAll('.video-container video').forEach(video => {
-                video.play();
+                video.play().catch(e => {
+                    // Autoplay was prevented, mute video and try again
+                    video.muted = true;
+                    video.play();
+                });
             });
         });
         
         // Scroll detection for nav
-        window.addEventListener('scroll', function() {
+        function handleScroll() {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
                 nav.classList.add('scrolled');
@@ -1342,13 +1561,20 @@
                 }
             });
             
-            document.querySelectorAll('.nav-link:not(.gallery-link), .mobile-nav-links a:not(.gallery-link)').forEach(link => {
+            document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === `#${currentSection}`) {
                     link.classList.add('active');
                 }
             });
-        });
+        }
+        
+        // Throttle scroll events for better performance
+        let isScrolling;
+        window.addEventListener('scroll', function() {
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(handleScroll, 50);
+        }, false);
         
         // WhatsApp form submission
         document.getElementById('contact-form').addEventListener('submit', function(e) {
@@ -1395,6 +1621,97 @@ _This message was sent via MiniQ website_`;
             
             // Reset form
             this.reset();
+        });
+        
+        // Enhanced smooth scrolling with offset for fixed nav
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetSection = document.querySelector(targetId);
+                if(!targetSection) return;
+                
+                // Calculate scroll position with nav offset
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                
+                // Use smooth scrolling
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if(mobileNav.classList.contains('active')) {
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Add smooth scrolling for logo
+        document.querySelector('.logo').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = document.querySelector('#home');
+            if(!targetSection) return;
+            
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector('.nav-link[href="#home"]').classList.add('active');
+        });
+        
+        // Optimize video loading for mobile
+        function optimizeVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                // Only play videos when they're visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            video.play().catch(e => {
+                                video.muted = true;
+                                video.play();
+                            });
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                observer.observe(video);
+            });
+        }
+        
+        // Run optimizations when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            optimizeVideos();
+            
+            // Load videos after page is loaded
+            setTimeout(() => {
+                document.querySelectorAll('video').forEach(video => {
+                    video.load();
+                });
+            }, 1000);
         });
     </script>
 </body>
